@@ -1,0 +1,459 @@
+<title>Rule of Thumb — Energy</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#ECEFFE;-webkit-text-size-adjust:100%;}
+#app{height:100%;max-width:430px;margin:0 auto;display:flex;flex-direction:column;background:#F5F7FF;position:relative;overflow:hidden;}
+
+/* HEADER */
+#hdr{padding:52px 20px 16px;flex-shrink:0;transition:background .4s ease;position:relative;z-index:10;}
+.hdr-eye{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:2px;}
+#hdrTitle{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px;}
+.chips{display:flex;gap:7px;margin-top:13px;}
+.chip{padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.25);color:rgba(255,255,255,.65);background:rgba(255,255,255,.12);transition:all .2s;user-select:none;}
+.chip.on{background:rgba(255,255,255,.95);border-color:transparent;}
+
+/* CONTENT */
+#content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+.pane{display:none;padding:16px 16px 24px;}
+.pane.on{display:block;}
+
+/* CONVERT TAB */
+.sec-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;transition:color .3s;}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.pill{padding:5px 11px;border-radius:10px;font-size:10px;font-weight:600;background:#EEF0FF;color:#8094B0;border:1.5px solid #DDE2F5;cursor:pointer;transition:all .2s;user-select:none;}
+.pill.on{color:#fff;border-color:transparent;}
+
+.from-card{background:#fff;border-radius:18px;padding:16px;border:2px solid transparent;box-shadow:0 2px 16px rgba(0,0,0,.06);margin-bottom:10px;transition:border-color .3s;}
+.from-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.from-desc{font-size:12px;font-weight:600;color:#8094B0;}
+.input-row{display:flex;align-items:baseline;gap:6px;}
+#numInput{font-size:38px;font-weight:900;color:#1A1F4E;background:transparent;border:none;outline:none;width:100%;font-family:inherit;font-variant-numeric:tabular-nums;letter-spacing:-1.5px;-moz-appearance:textfield;}
+#numInput::-webkit-outer-spin-button,#numInput::-webkit-inner-spin-button{-webkit-appearance:none;}
+.input-unit{font-size:14px;color:#A0AEC0;white-space:nowrap;flex-shrink:0;}
+
+.swap-row{display:flex;justify-content:center;margin:2px 0 10px;}
+#swapBtn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;border:none;color:#fff;transition:all .3s;box-shadow:0 4px 14px rgba(0,0,0,.2);}
+
+#resCard{background:#1A1F4E;border-radius:18px;padding:16px;}
+.res-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:5px;}
+#resNum{font-size:38px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-1.5px;line-height:1;transition:color .3s;}
+#resUnit{font-size:14px;color:rgba(255,255,255,.45);margin-top:2px;}
+.formula-line{font-size:10px;color:rgba(255,255,255,.2);margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);word-break:break-word;}
+
+/* INFO CARDS */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.info-card{background:#fff;border-radius:12px;padding:12px;border:1.5px solid #ECEFFE;box-shadow:0 1px 6px rgba(0,0,0,.04);}
+.info-card-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#A0AEC0;margin-bottom:4px;}
+.info-card-val{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;}
+.info-card-sub{font-size:9px;color:#C0CCEE;margin-top:3px;line-height:1.4;}
+
+/* ELASTICITY TAB */
+.e-section{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8094B0;margin:16px 0 8px;}
+.e-section:first-child{margin-top:0;}
+.e-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 8px rgba(0,0,0,.05);margin-bottom:8px;border:1.5px solid #ECEFFE;}
+.e-row{display:flex;align-items:center;padding:12px 14px;gap:8px;border-bottom:1px solid #F5F6FF;}
+.e-row:last-child{border-bottom:none;}
+.e-if{flex:1;min-width:0;}
+.e-if-lbl{font-size:9px;color:#A0AEC0;text-transform:uppercase;letter-spacing:.06em;}
+.e-if-val{font-size:13px;font-weight:600;color:#1A1F4E;margin-top:1px;}
+.e-arrow{font-size:12px;color:#DDE2F5;flex-shrink:0;}
+.e-then{text-align:right;flex-shrink:0;}
+.e-then-lbl{font-size:9px;color:#A0AEC0;text-transform:uppercase;letter-spacing:.06em;}
+.e-then-val{font-size:15px;font-weight:800;margin-top:1px;}
+
+.ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.ref-item{background:#fff;border-radius:12px;padding:11px 12px;border:1.5px solid #ECEFFE;box-shadow:0 1px 5px rgba(0,0,0,.04);}
+.ref-lbl{font-size:9px;color:#A0AEC0;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;}
+.ref-val{font-size:13px;font-weight:700;color:#1A1F4E;font-variant-numeric:tabular-nums;}
+
+/* TARIFF TAB */
+.t-toggle{display:flex;background:#EEF0FF;border-radius:12px;padding:3px;margin-bottom:14px;}
+.t-tog-btn{flex:1;padding:8px 0;border-radius:9px;font-size:12px;font-weight:700;text-align:center;cursor:pointer;color:#8094B0;transition:all .2s;user-select:none;}
+.t-tog-btn.on{background:#fff;color:#1A1F4E;box-shadow:0 1px 6px rgba(0,0,0,.08);}
+.t-date{font-size:10px;color:#A0AEC0;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.t-date-dot{width:6px;height:6px;border-radius:50%;background:#00C48C;flex-shrink:0;}
+.t-table{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 8px rgba(0,0,0,.05);border:1.5px solid #ECEFFE;}
+.t-head{background:#F5F7FF;display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px 14px;border-bottom:1px solid #ECEFFE;}
+.t-th{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8094B0;}
+.t-th:not(:first-child){text-align:right;}
+.t-row{display:grid;grid-template-columns:1fr 1fr 1fr;padding:11px 14px;border-bottom:1px solid #F5F6FF;align-items:center;}
+.t-row:last-child{border-bottom:none;}
+.t-zone{font-size:12px;font-weight:700;color:#1A1F4E;}
+.t-v{font-size:13px;font-weight:600;color:#1A1F4E;text-align:right;font-variant-numeric:tabular-nums;}
+.t-note{font-size:10px;color:#A0AEC0;margin-top:10px;text-align:center;line-height:1.5;}
+
+/* TABBAR */
+#tabBar{background:#fff;border-top:1px solid #EEF0FF;display:flex;padding:8px 0 16px;flex-shrink:0;box-shadow:0 -2px 12px rgba(0,0,0,.05);z-index:10;}
+.tb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;user-select:none;}
+.tb-icon{font-size:18px;opacity:.22;transition:opacity .2s;}
+.tb.on .tb-icon{opacity:1;}
+.tb-dot{width:5px;height:5px;border-radius:50%;opacity:0;transition:all .25s;}
+.tb.on .tb-dot{opacity:1;}
+.tb-lbl{font-size:9px;color:#C0CCEE;letter-spacing:.06em;transition:color .2s;}
+.tb.on .tb-lbl{font-weight:700;}
+</style>
+
+<div id="app">
+  <header id="hdr">
+    <div class="hdr-eye">Rule of Thumb · Energy</div>
+    <div id="hdrTitle">⛽ Fuel Oil</div>
+    <div class="chips" id="chips"></div>
+  </header>
+
+  <div id="content">
+    <!-- CONVERT -->
+    <div id="pConvert" class="pane on">
+      <div class="sec-lbl" id="convSecLbl">เลือก Conversion</div>
+      <div class="pills" id="pills"></div>
+      <div class="from-card" id="fromCard">
+        <div class="from-top">
+          <div class="sec-lbl" id="fromLbl" style="margin-bottom:0">จาก</div>
+          <div class="from-desc" id="fromDesc">FO2%S</div>
+        </div>
+        <div class="input-row">
+          <input id="numInput" type="text" inputmode="decimal" placeholder="0" autocomplete="off" spellcheck="false">
+          <span class="input-unit" id="fromUnit">Ton</span>
+        </div>
+      </div>
+      <div class="swap-row">
+        <button id="swapBtn" onclick="doSwap()">⇅</button>
+      </div>
+      <div id="resCard">
+        <div class="res-lbl">ผลลัพธ์</div>
+        <div id="resNum" style="color:#00FFB4">—</div>
+        <div id="resUnit">MMBtu</div>
+        <div class="formula-line" id="fmla">เลือก Conversion แล้วกรอกตัวเลข</div>
+      </div>
+      <div id="infoSec" style="display:none;margin-top:16px;">
+        <div class="sec-lbl" id="infoSecLbl">ข้อมูลอ้างอิง</div>
+        <div class="info-grid" id="infoGrid"></div>
+      </div>
+    </div>
+
+    <!-- ELASTICITY -->
+    <div id="pElast" class="pane">
+      <div id="elastBody"></div>
+    </div>
+
+    <!-- TARIFF -->
+    <div id="pTariff" class="pane">
+      <div class="t-toggle">
+        <div class="t-tog-btn on" onclick="showTariff('tdtc')">Pipeline (Td/Tc)</div>
+        <div class="t-tog-btn" onclick="showTariff('ldlc')">Local Dist (Ld/Lc)</div>
+      </div>
+      <div id="tariffBody"></div>
+    </div>
+  </div>
+
+  <nav id="tabBar">
+    <div class="tb on" id="tb-convert" onclick="showTab('convert')">
+      <div class="tb-icon">⇄</div>
+      <div class="tb-dot" id="dot-convert"></div>
+      <div class="tb-lbl">CONVERT</div>
+    </div>
+    <div class="tb" id="tb-elast" onclick="showTab('elast')">
+      <div class="tb-icon">📊</div>
+      <div class="tb-dot" id="dot-elast"></div>
+      <div class="tb-lbl">ELASTICITY</div>
+    </div>
+    <div class="tb" id="tb-tariff" onclick="showTab('tariff')">
+      <div class="tb-icon">📋</div>
+      <div class="tb-dot" id="dot-tariff"></div>
+      <div class="tb-lbl">TARIFF</div>
+    </div>
+  </nav>
+</div>
+
+<script>
+(function(){const m=document.createElement('meta');m.name='viewport';m.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no';document.head.appendChild(m);})();
+
+const P={
+  fo:{name:'Fuel Oil',short:'FO',emoji:'⛽',pa:'#FF5A1F',pb:'#FF9500',neon:'#FFB080',
+    conv:[
+      {lb:'Ton ↔ MMBtu',    fd:'FO2%S',  fu:'Ton',        td:'FO2%S',  tu:'MMBtu',      f:41.662, df:'41.662', do_:'×'},
+      {lb:'Ton ↔ BBL',      fd:'FO2%S',  fu:'Ton',        td:'FO2%S',  tu:'BBL',        f:6.35,   df:'6.35',   do_:'×'},
+      {lb:'HSFO ↔ FO2%S',   fd:'HSFO',   fu:'Ton',        td:'FO2%S',  tu:'Ton',        f:0.978,  df:'0.978',  do_:'×'},
+      {lb:'FO(C) L↔MMBtu',  fd:'FO (C)', fu:'THB/Litre',  td:'FO (C)', tu:'THB/MMBtu', f:24.22,  df:'24.22',  do_:'×'},
+      {lb:'FO L↔MMBtu',     fd:'FO',     fu:'Litre',      td:'FO',     tu:'MMBtu',      f:0.0377, df:'0.0377', do_:'×'},
+      {lb:'Brent↔LNG (LT)', fd:'Brent',  fu:'USD/BBL',    td:'LNG LT', tu:'USD/MMBtu', f:0.135,  df:'13.5%',  do_:'×'},
+    ]},
+  lng:{name:'LNG',short:'LNG',emoji:'🧊',pa:'#3B6EFF',pb:'#00C4D4',neon:'#90CAFF',
+    conv:[
+      {lb:'Cargo→Ton',      fd:'LNG',fu:'Cargo',   td:'LNG',tu:'Ton',      f:60000,  df:'60,000', do_:'×',ow:true},
+      {lb:'Cargo→mmscf',    fd:'LNG',fu:'Cargo',   td:'LNG',tu:'mmscf',    f:3000,   df:'3,000',  do_:'×',ow:true},
+      {lb:'MMBtu↔kg',       fd:'LNG',fu:'MMBtu',   td:'LNG',tu:'kg',       f:0.052,  df:'0.052',  do_:'×'},
+      {lb:'Brent↔LNG (LT)', fd:'Brent',fu:'USD/BBL',td:'LNG LT',tu:'USD/MMBtu',f:0.135,df:'13.5%',do_:'×'},
+    ]},
+  lpg:{name:'LPG',short:'LPG',emoji:'🔵',pa:'#7B3BFF',pb:'#C040E0',neon:'#C0A0FF',
+    conv:[
+      {lb:'THB/kg↔MMBtu', fd:'LPG',fu:'THB/kg', td:'LPG',tu:'THB/MMBtu',f:20.47,  df:'20.47',   do_:'×'},
+      {lb:'kg↔MMBtu',     fd:'LPG',fu:'kg',      td:'LPG',tu:'MMBtu',    f:0.004674,df:'0.004674',do_:'×'},
+    ]},
+  ng:{name:'Natural Gas',short:'NG',emoji:'🌿',pa:'#00B87A',pb:'#00A3D4',neon:'#00FFB4',
+    conv:[
+      {lb:'mmBtu/yr↔mmscfd',fd:'NG',fu:'mm MMBtu/yr',td:'NG',tu:'mmscfd',   f:1/2.74, df:'2.74', do_:'÷'},
+      {lb:'MMBtu→kgCO₂',    fd:'NG',fu:'MMBtu',      td:'CO₂',tu:'kgCO₂',  f:62.11,  df:'62.11',do_:'×',ow:true},
+      {lb:'mmscf↔MMBtu',    fd:'NG',fu:'mmscf',      td:'NG',tu:'MMBtu',    f:1000,   df:'1,000', do_:'×'},
+      {lb:'MMBtu→CO₂(NG)',  fd:'NG',fu:'MMBtu',      td:'CO₂',tu:'kg',      f:53,     df:'53',    do_:'×',ow:true},
+    ]},
+  h2:{name:'Hydrogen',short:'H₂',emoji:'⚡',pa:'#D49000',pb:'#FF6B00',neon:'#FFD060',
+    conv:[
+      {lb:'kg↔MMBtu', fd:'H₂',fu:'kg',td:'H₂',tu:'MMBtu',f:0.1345,df:'0.1345',do_:'×'},
+    ],
+    info:[
+      {l:'ราคาตลาด (Market)',v:'$74/MMBtu',s:'≈ ฿2,700/MMBtu (@37 ฿/USD)'},
+      {l:'ราคา GPSC',v:'$52/MMBtu',s:'≈ ฿1,900/MMBtu (@37 ฿/USD)'},
+      {l:'LHV/GHV Efficiency',v:'84.5%',s:'H₂ Lower/Gross HV ratio'},
+      {l:'GHV (kg)',v:'134,600 Btu/kg',s:'Gross Heating Value'},
+      {l:'GHV (Gas)',v:'12,000 Btu/Sm³',s:'= 3× Lower NG heating value'},
+      {l:'Density',v:'0.08988 kg/Sm³',s:'H₂ gas density'},
+      {l:'Green H₂ CO₂',v:'≈ 0 kgCO₂/kgH₂',s:'Near-zero emission'},
+      {l:'Grey H₂ CO₂',v:'~11 kgCO₂/kgH₂',s:'Steam methane reforming'},
+      {l:'Blue H₂ CO₂',v:'2–3 kgCO₂/kgH₂',s:'Grey + Carbon Capture (CCS)'},
+    ]}
+};
+
+const ELAST=[
+  {sec:'FO Premium · Selling Price',rows:[
+    {il:'FO2%S',iv:'+1 USD/Ton',  tl:'Selling Price (FO Premium)',tv:'+1 THB/MMBtu'},
+    {il:'FO2%S',iv:'+1 USD/BBL',  tl:'Selling Price (FO Premium)',tv:'+6 THB/MMBtu'},
+    {il:'Fx (อัตราแลกเปลี่ยน)',iv:'+1 THB/USD',tl:'Selling Price (FO Premium)',tv:'+10 THB/MMBtu'},
+    {il:'PPI',iv:'+10 unit',       tl:'Selling Price (FO Premium)',tv:'+6–11 THB/MMBtu'},
+    {il:'PPI',iv:'+10 unit',       tl:'Cn (ค่าการตลาด)',tv:'+3 THB/MMBtu'},
+  ]},
+  {sec:'Cogen & Pool Price',rows:[
+    {il:'PPI',iv:'+10 unit',           tl:'Cogen Price',tv:'+1 THB/MMBtu'},
+    {il:'Pool Price',iv:'+1 THB/MMBtu',tl:'Cogen Price',tv:'+1.125 THB/MMBtu'},
+    {il:'Pool Price',iv:'+1 THB/MMBtu',tl:'NG Cost',    tv:'+1.075 THB/MMBtu'},
+  ]},
+  {sec:'LPG',rows:[
+    {il:'CP Price',iv:'+1 USD/Ton',tl:'LPG Market Price',tv:'+0.9–1.1 THB/MMBtu'},
+  ]},
+];
+
+const REFS=[
+  {l:'NG Premium for FO',v:'5.8% of FO market'},
+  {l:'NG Premium for LPG',v:'3.0% of LPG market'},
+  {l:'Shale Oil Breakeven',v:'~$66 USD/BBL'},
+  {l:'LNG Carbon Emission',v:'120–130% of NG'},
+  {l:'LNG truck (18T)',v:'842 MMBtu/trailer'},
+  {l:'Iso Tank LNG 40m³',v:'832 MMBtu/tank'},
+  {l:'Energy/Rai (Non-EV)',v:'590 MMBtu/Rai'},
+  {l:'Energy/Rai (EV)',v:'509 MMBtu/Rai'},
+];
+
+const TARIFF={
+  tdtc:{
+    date:'ก.ย. 2566 (กกพ. มีมติ 13 ก.ย. 66)',
+    note:'Td = THB/MMBtu/วัน (Demand Charge)   Tc = THB/MMBtu (Commodity Charge)',
+    cols:['Zone','Td','Tc'],
+    rows:[['Zone 1','12.8869','0.2207'],['Zone 2','2.1135','0.0248'],['Zone 3','11.6894','1.9304'],['Zone 4','1.0061','0.0806'],['Zone 5','0.2693','0.0000']],
+  },
+  ldlc:{
+    date:'ก.ย. 2566 (กกพ. มีมติ 13 ก.ย. 66)',
+    note:'Ld = THB/MMBtu/วัน (Demand Charge)   Lc = THB/MMBtu (Commodity Charge)',
+    cols:['Zone','Ld','Lc'],
+    rows:[['LMPT1','12.8869','0.2693'],['LMPT2','2.1135','0.2207'],['GMTP','1.0061','0.0000']],
+  }
+};
+
+let st={prod:'fo',ci:0,sw:false,tab:'convert',tariff:'tdtc'};
+
+function fmtNum(n){
+  if(isNaN(n)||!isFinite(n))return'—';
+  const a=Math.abs(n);
+  if(a===0)return'0';
+  if(a>=1e6)return(n/1e6).toLocaleString('en-US',{maximumFractionDigits:3})+'M';
+  if(a>=1000)return n.toLocaleString('en-US',{maximumFractionDigits:2});
+  if(a>=1)  return n.toLocaleString('en-US',{maximumFractionDigits:4});
+  if(a>=0.01)return n.toPrecision(4);
+  return n.toPrecision(3);
+}
+function fmtInput(n){
+  if(isNaN(n)||!isFinite(n))return'';
+  return parseFloat(n.toPrecision(8)).toString();
+}
+
+function applyTheme(k){
+  const p=P[k];
+  document.getElementById('hdr').style.background=`linear-gradient(145deg,${p.pa},${p.pb})`;
+  document.getElementById('hdrTitle').textContent=`${p.emoji} ${p.name}`;
+  document.querySelectorAll('.chip').forEach(c=>{
+    const on=c.dataset.k===k;
+    c.classList.toggle('on',on);
+    c.style.color=on?p.pa:'';
+  });
+  document.getElementById('fromCard').style.borderColor=p.pa+'50';
+  document.getElementById('fromLbl').style.color=p.pa;
+  document.getElementById('convSecLbl').style.color=p.pa;
+  document.getElementById('infoSecLbl').style.color=p.pa;
+  document.getElementById('resNum').style.color=p.neon;
+  const sb=document.getElementById('swapBtn');
+  sb.style.background=`linear-gradient(135deg,${p.pa},${p.pb})`;
+  sb.style.boxShadow=`0 4px 16px ${p.pa}55`;
+  ['convert','elast','tariff'].forEach(t=>{
+    const dot=document.getElementById('dot-'+t);
+    dot.style.background=p.pa;
+    const lbl=document.querySelector(`#tb-${t} .tb-lbl`);
+    if(document.getElementById('tb-'+t).classList.contains('on'))lbl.style.color=p.pa;
+  });
+  // elasticity then-val color
+  document.querySelectorAll('.e-then-val').forEach(el=>el.style.color=p.pa);
+}
+
+function renderChips(){
+  const row=document.getElementById('chips');
+  row.innerHTML='';
+  Object.entries(P).forEach(([k,p])=>{
+    const c=document.createElement('div');
+    c.className='chip';c.textContent=p.short;c.dataset.k=k;
+    c.onclick=()=>setProd(k);
+    row.appendChild(c);
+  });
+}
+
+function renderPills(){
+  const el=document.getElementById('pills');
+  el.innerHTML='';
+  P[st.prod].conv.forEach((c,i)=>{
+    const d=document.createElement('div');
+    d.className='pill'+(i===st.ci?' on':'');
+    d.textContent=c.lb;
+    if(i===st.ci){d.style.background=P[st.prod].pa;d.style.borderColor='transparent';}
+    d.onclick=()=>{st.ci=i;st.sw=false;renderPills();updateConv();};
+    el.appendChild(d);
+  });
+}
+
+function renderInfo(){
+  const sec=document.getElementById('infoSec');
+  const inf=P[st.prod].info;
+  if(!inf){sec.style.display='none';return;}
+  sec.style.display='block';
+  const grid=document.getElementById('infoGrid');
+  grid.innerHTML='';
+  inf.forEach(it=>{
+    const c=document.createElement('div');
+    c.className='info-card';
+    c.innerHTML=`<div class="info-card-lbl">${it.l}</div><div class="info-card-val" style="color:${P[st.prod].pa}">${it.v}</div><div class="info-card-sub">${it.s}</div>`;
+    grid.appendChild(c);
+  });
+}
+
+function updateConv(){
+  const p=P[st.prod],c=p.conv[st.ci];
+  const fd=st.sw?c.td:c.fd, fu=st.sw?c.tu:c.fu;
+  const td=st.sw?c.fd:c.td, tu=st.sw?c.fu:c.tu;
+  document.getElementById('fromDesc').textContent=fd;
+  document.getElementById('fromUnit').textContent=fu;
+  document.getElementById('resUnit').textContent=tu;
+  const op=st.sw?(c.do_==='×'?'÷':'×'):c.do_;
+  document.getElementById('fmla').textContent=`${fd} (${fu}) ${op} ${c.df} = ${td} (${tu})`;
+  const swapBtn=document.getElementById('swapBtn');
+  swapBtn.style.opacity=c.ow?'0.4':'1';
+  swapBtn.style.cursor=c.ow?'not-allowed':'pointer';
+  calc();
+}
+
+function calc(){
+  const raw=document.getElementById('numInput').value.replace(/,/g,'');
+  const v=parseFloat(raw);
+  if(isNaN(v)||raw===''){document.getElementById('resNum').textContent='—';return;}
+  const c=P[st.prod].conv[st.ci];
+  const result=st.sw?v/c.f:v*c.f;
+  document.getElementById('resNum').textContent=fmtNum(result);
+}
+
+function doSwap(){
+  const c=P[st.prod].conv[st.ci];
+  if(c.ow)return;
+  const raw=document.getElementById('numInput').value.replace(/,/g,'');
+  const v=parseFloat(raw);
+  if(!isNaN(v)&&raw!==''){
+    const result=st.sw?v/c.f:v*c.f;
+    document.getElementById('numInput').value=fmtInput(result);
+  }
+  st.sw=!st.sw;
+  const btn=document.getElementById('swapBtn');
+  btn.style.transform='rotate(180deg)';
+  setTimeout(()=>btn.style.transform='',300);
+  btn.style.transition='transform .3s';
+  updateConv();
+}
+
+function setProd(k){
+  st.prod=k;st.ci=0;st.sw=false;
+  applyTheme(k);renderPills();renderInfo();updateConv();
+}
+
+function renderElast(){
+  const b=document.getElementById('elastBody');
+  b.innerHTML='';
+  ELAST.forEach(sec=>{
+    const t=document.createElement('div');
+    t.className='e-section';t.textContent=sec.sec;b.appendChild(t);
+    const card=document.createElement('div');
+    card.className='e-card';
+    sec.rows.forEach(r=>{
+      const row=document.createElement('div');
+      row.className='e-row';
+      row.innerHTML=`<div class="e-if"><div class="e-if-lbl">ถ้า ${r.il}</div><div class="e-if-val">${r.iv}</div></div><div class="e-arrow">→</div><div class="e-then"><div class="e-then-lbl">${r.tl}</div><div class="e-then-val" style="color:${P[st.prod].pa}">${r.tv}</div></div>`;
+      card.appendChild(row);
+    });
+    b.appendChild(card);
+  });
+  // Extra refs
+  const rt=document.createElement('div');
+  rt.className='e-section';rt.textContent='ข้อมูลอ้างอิงอื่นๆ';b.appendChild(rt);
+  const rg=document.createElement('div');
+  rg.className='ref-grid';
+  REFS.forEach(r=>{
+    const c=document.createElement('div');
+    c.className='ref-item';
+    c.innerHTML=`<div class="ref-lbl">${r.l}</div><div class="ref-val">${r.v}</div>`;
+    rg.appendChild(c);
+  });
+  b.appendChild(rg);
+}
+
+function renderTariff(mode){
+  const d=TARIFF[mode];
+  const b=document.getElementById('tariffBody');
+  b.innerHTML=`
+    <div class="t-date"><div class="t-date-dot"></div><span>อัปเดต: ${d.date}</span></div>
+    <div class="t-table">
+      <div class="t-head">${d.cols.map((c,i)=>`<div class="t-th"${i?'style="text-align:right"':''}>${c}</div>`).join('')}</div>
+      ${d.rows.map(r=>`<div class="t-row"><div class="t-zone">${r[0]}</div><div class="t-v">${r[1]}</div><div class="t-v">${r[2]}</div></div>`).join('')}
+    </div>
+    <div class="t-note">${d.note}</div>`;
+}
+
+function showTariff(mode){
+  st.tariff=mode;
+  document.querySelectorAll('.t-tog-btn').forEach((b,i)=>b.classList.toggle('on',(i===0&&mode==='tdtc')||(i===1&&mode==='ldlc')));
+  renderTariff(mode);
+}
+
+function showTab(tab){
+  st.tab=tab;
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.getElementById('p'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('on');
+  document.querySelectorAll('.tb').forEach(b=>{
+    b.classList.remove('on');
+    b.querySelector('.tb-lbl').style.color='';
+  });
+  const btn=document.getElementById('tb-'+tab);
+  btn.classList.add('on');
+  btn.querySelector('.tb-lbl').style.color=P[st.prod].pa;
+  if(tab==='elast')renderElast();
+}
+
+document.getElementById('numInput').addEventListener('input',calc);
+
+// INIT
+renderChips();
+setProd('fo');
+renderElast();
+renderTariff('tdtc');
+</script>
